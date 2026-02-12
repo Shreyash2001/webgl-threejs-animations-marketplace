@@ -3,4 +3,5 @@ export const defaultConfig = {
   particleCount: 1500,
   speed: 1,
   color: "#ffffff",
+  target: "dust-container",
 };
