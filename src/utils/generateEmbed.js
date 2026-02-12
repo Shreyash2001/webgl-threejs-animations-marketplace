@@ -1,6 +1,6 @@
 export function generateEmbedCode(effectName, config) {
   const username = "Shreyash2001";
-  const repo = "dust-text-effect";
+  const repo = "webgl-threejs-animations-marketplace";
   const version = "v1.0.0";
 
   const configString = JSON.stringify(config).replace(/"/g, "&quot;");
