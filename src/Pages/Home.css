@@ -1,0 +1,80 @@
+/* src/Home.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.homepage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: white;
+    /* Assuming dark/colorful background; adjust as needed */
+    text-align: center;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+}
+
+.homepage-title {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.homepage-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    max-width: 800px;
+    font-weight: 400;
+}
+
+.homepage-button {
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.homepage-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .homepage-title {
+        font-size: 2.5rem;
+    }
+
+    .homepage-subtitle {
+        font-size: 1.2rem;
+        padding: 0 10px;
+    }
+
+    .homepage-button {
+        padding: 12px 24px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .homepage-title {
+        font-size: 2rem;
+    }
+
+    .homepage-subtitle {
+        font-size: 1rem;
+    }
+
+    .homepage-button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+}
