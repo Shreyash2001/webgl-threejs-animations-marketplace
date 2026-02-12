@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export function createEffect({ container, config }) {
-  const { text, speed, color } = config;
+  let { text, speed, color } = config;
   let animationId;
   const mouse = new THREE.Vector2(-1000, -1000);
 
@@ -21,70 +21,103 @@ export function createEffect({ container, config }) {
   container.innerHTML = "";
   container.appendChild(renderer.domElement);
 
-  // 1. Create High-Res Texture for SOLID text
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = container.clientWidth * dpr;
-  canvas.height = container.clientHeight * dpr;
+  let geometry = null;
+  let material = null;
+  let points = null;
+  let originals = null;
 
-  ctx.scale(dpr, dpr);
-  ctx.fillStyle = color;
-  ctx.font = `bold ${Math.min(container.clientWidth / 6, 120)}px Inter, Arial, sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(text, container.clientWidth / 2, container.clientHeight / 2);
+  function buildScene() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = container.clientWidth * dpr;
+    canvas.height = container.clientHeight * dpr;
 
-  const texture = new THREE.CanvasTexture(canvas);
+    ctx.scale(dpr, dpr);
+    ctx.fillStyle = "#ffffff"; 
+    ctx.font = `bold ${Math.min(container.clientWidth / 6, 120)}px Inter, Arial, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, container.clientWidth / 2, container.clientHeight / 2);
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    const spacing = 2;
+    const positions = [];
+    
+    const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const canvasWidth = canvas.width;
 
-  // 2. Create Geometry (A dense grid of points that form the solid text)
-  const width = container.clientWidth;
-  const height = container.clientHeight;
-  const spacing = 2; // Low spacing = Solid look
-  const positions = [];
-  const uvs = [];
-
-  for (let y = 0; y < height; y += spacing) {
-    for (let x = 0; x < width; x += spacing) {
-      // Only add particles where the text actually is (alpha check)
-      const pixelData = ctx.getImageData(x * dpr, y * dpr, 1, 1).data;
-      if (pixelData[3] > 10) {
-        positions.push(x - width / 2, -(y - height / 2), 0);
-        uvs.push(x / width, 1 - y / height);
+    for (let y = 0; y < height; y += spacing) {
+      for (let x = 0; x < width; x += spacing) {
+        const cx = Math.floor(x * dpr);
+        const cy = Math.floor(y * dpr);
+        const index = (cy * canvasWidth + cx) * 4;
+        
+        if (pixelData[index + 3] > 10) {
+           positions.push(x - width / 2, -(y - height / 2), 0);
+        }
       }
     }
+
+    if (geometry) geometry.dispose();
+    geometry = new THREE.BufferGeometry();
+    geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3),
+    );
+    originals = new Float32Array(positions); 
+
+    if (material) {
+        material.color.set(color);
+    } else {
+        material = new THREE.PointsMaterial({
+            color: color,
+            size: spacing * 1.5,
+            transparent: true,
+            opacity: 1,
+        });
+    }
+
+    if (points) scene.remove(points);
+    points = new THREE.Points(geometry, material);
+    scene.add(points);
   }
 
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(positions, 3),
-  );
-  const originals = new Float32Array(positions); // Memory for physics
+  buildScene();
 
-  // 3. Material: Use a larger point size so they overlap into a solid block
-  const material = new THREE.PointsMaterial({
-    color: color,
-    size: spacing * 1.5, // Overlap ensures no gaps/dots
-    transparent: true,
-    opacity: 1,
-  });
-
-  const points = new THREE.Points(geometry, material);
-  scene.add(points);
-
-  // Interaction
   const handleMouseMove = (e) => {
     const rect = container.getBoundingClientRect();
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
     mouse.x = e.clientX - rect.left - width / 2;
     mouse.y = -(e.clientY - rect.top) + height / 2;
   };
+  
   container.addEventListener("mousemove", handleMouseMove);
   container.addEventListener("mouseleave", () => mouse.set(-1000, -1000));
 
+  let isVisible = true;
+  let isTabVisible = !document.hidden;
+
+  const observer = new IntersectionObserver((entries) => {
+      isVisible = entries[0].isIntersecting;
+  }, { threshold: 0 });
+  observer.observe(container);
+
+  const handleVisibilityChange = () => {
+      isTabVisible = !document.hidden;
+  };
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+
   function animate() {
     animationId = requestAnimationFrame(animate);
+
+    if (!isVisible || !isTabVisible) return;
+    if (!geometry || !points) return;
+
     const posAttr = geometry.attributes.position;
+    let needsUpdate = false;
 
     for (let i = 0; i < posAttr.count; i++) {
       const i3 = i * 3;
@@ -95,35 +128,71 @@ export function createEffect({ container, config }) {
 
       const dx = mouse.x - curX;
       const dy = mouse.y - curY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const distSq = dx * dx + dy * dy;
       const radius = 40;
+      const radiusSq = radius * radius;
 
-      if (dist < radius) {
-        // "Heavy Sand" pushing away
+      if (distSq < radiusSq) {
+        const dist = Math.sqrt(distSq);
         const force = (radius - dist) / radius;
         const angle = Math.atan2(dy, dx);
+        
         posAttr.array[i3] -= Math.cos(angle) * force * 15 * speed;
         posAttr.array[i3 + 1] -= Math.sin(angle) * force * 15 * speed;
+        needsUpdate = true;
       } else {
-        // Return to solid state with "weighted" friction
-        posAttr.array[i3] += (ox - curX) * 0.12;
-        posAttr.array[i3 + 1] += (oy - curY) * 0.12;
+        const diffX = ox - curX;
+        const diffY = oy - curY;
+        
+        if (Math.abs(diffX) > 0.1 || Math.abs(diffY) > 0.1) {
+            posAttr.array[i3] += diffX * 0.12;
+            posAttr.array[i3 + 1] += diffY * 0.12;
+            needsUpdate = true;
+        } else if (curX !== ox || curY !== oy) {
+             posAttr.array[i3] = ox;
+             posAttr.array[i3+1] = oy;
+             needsUpdate = true;
+        }
       }
     }
 
-    posAttr.needsUpdate = true;
+    if (needsUpdate) {
+        posAttr.needsUpdate = true;
+    }
+    
     renderer.render(scene, camera);
   }
 
   animate();
 
   return {
+    update(newConfig) {
+        const oldText = text;
+        const oldColor = color;
+        
+        text = newConfig.text;
+        speed = newConfig.speed;
+        color = newConfig.color;
+
+        if (text !== oldText) {
+             buildScene();
+        } else if (color !== oldColor) {
+             if (material) material.color.set(color);
+        }
+    },
     destroy() {
       cancelAnimationFrame(animationId);
-      renderer.dispose();
-      geometry.dispose();
-      material.dispose();
-      texture.dispose();
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      container.removeEventListener("mousemove", handleMouseMove);
+      
+      if (renderer) renderer.dispose();
+      if (geometry) geometry.dispose();
+      if (material) material.dispose();
+      
+      if (container && renderer.domElement && container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
+      }
     },
   };
 }

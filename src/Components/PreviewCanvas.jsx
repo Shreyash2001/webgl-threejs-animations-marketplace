@@ -2,21 +2,36 @@ import { useEffect, useRef } from "react";
 
 export default function PreviewCanvas({ effectModule, config }) {
   const ref = useRef(null);
+  const instanceRef = useRef(null);
 
   useEffect(() => {
     if (!ref.current || !effectModule) return;
 
-    // We pass the config directly.
-    // Ensure text is provided in the config object
-    const instance = effectModule.createEffect({
+    if (instanceRef.current) {
+      instanceRef.current.destroy();
+    }
+    instanceRef.current = effectModule.createEffect({
       container: ref.current,
       config: config,
     });
 
     return () => {
-      if (instance && instance.destroy) instance.destroy();
+      if (instanceRef.current) {
+        instanceRef.current.destroy();
+        instanceRef.current = null;
+      }
     };
-  }, [effectModule, config]); // Re-run if config (like text or color) changes
+  }, [effectModule]); 
+
+  useEffect(() => {
+    if (instanceRef.current) {
+      if (instanceRef.current.update) {
+        instanceRef.current.update(config);
+      } else {
+        console.warn("Effect module does not support update method.");
+      }
+    }
+  }, [config]);
 
   return (
     <div
@@ -24,7 +39,7 @@ export default function PreviewCanvas({ effectModule, config }) {
       style={{
         height: "500px",
         width: "100%",
-        background: "#050505", // Dark background makes white sand pop
+        background: "#050505",
         position: "relative",
         overflow: "hidden",
       }}

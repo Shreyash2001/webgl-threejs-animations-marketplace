@@ -8,7 +8,7 @@ export default defineConfig({
     lib: {
       entry: "src/effects/dust/embed.js",
       name: "Dust",
-      fileName: "dust",
+      fileName: (format) => `dust.${format}.js`,
       formats: ["umd"],
     },
   },
