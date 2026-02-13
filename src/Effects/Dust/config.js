@@ -4,4 +4,5 @@ export const defaultConfig = {
   speed: 1,
   color: "#ffffff",
   target: "dust-container",
+  textSize: 120,    
 };

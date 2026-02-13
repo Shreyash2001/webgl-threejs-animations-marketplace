@@ -35,7 +35,7 @@ export function createEffect({ container, config }) {
 
     ctx.scale(dpr, dpr);
     ctx.fillStyle = "#ffffff"; 
-    ctx.font = `bold ${Math.min(container.clientWidth / 6, 120)}px Inter, Arial, sans-serif`;
+    ctx.font = `bold ${config.textSize || 120}px Inter, Arial, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(text, container.clientWidth / 2, container.clientHeight / 2);
@@ -174,11 +174,12 @@ export function createEffect({ container, config }) {
         speed = newConfig.speed;
         color = newConfig.color;
 
-        if (text !== oldText) {
+        if (text !== oldText || newConfig.textSize !== config.textSize) {
              buildScene();
         } else if (color !== oldColor) {
              if (material) material.color.set(color);
         }
+        config = newConfig;
     },
     destroy() {
       cancelAnimationFrame(animationId);

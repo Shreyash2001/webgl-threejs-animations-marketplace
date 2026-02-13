@@ -1,40 +1,48 @@
-import { useState, useEffect } from "react";
-import { effectsRegistry } from "../Effects/registry";
-import PreviewCanvas from "../Components/PreviewCanvas";
-import ControlsRenderer from "../Components/ControlsRenderer";
-import { generateEmbedCode } from "../utils/generateEmbed";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { effectsRegistry } from '../Effects/registry';
+import Silk from '../Components/Background/Silk';
+import './Marketplace.css';
 
 export default function Marketplace() {
-  const [selectedEffect, setSelectedEffect] = useState("dust");
-  const effectModule = effectsRegistry[selectedEffect];
-
-  const [config, setConfig] = useState(effectModule.defaultConfig);
-
-  useEffect(() => {
-    setConfig(effectModule.defaultConfig);
-  }, [selectedEffect]);
-
-  const [exportCode, setExportCode] = useState("");
+  const effects = Object.keys(effectsRegistry);
 
   return (
-    <div>
-      <h2>WebGL Effects Marketplace</h2>
-
-      <PreviewCanvas effectModule={effectModule} config={config} />
-
-      <ControlsRenderer
-        controls={effectModule.controls}
-        config={config}
-        setConfig={setConfig}
-      />
-
-      <button
-        onClick={() => setExportCode(generateEmbedCode(selectedEffect, config))}
-      >
-        Export
-      </button>
-
-      {exportCode && <pre>{exportCode}</pre>}
+    <>
+    <Silk />
+    <div className="marketplace-container">
+      <h1 className="effect-title">Explore Effects</h1>
+      <div className="effects-grid">
+        {effects.map((effectKey) => (
+          <div key={effectKey} className="effect-card">
+            <div className="effect-video-placeholder">
+              {/* Placeholder for video */}
+              <div className="video-overlay">
+                <span>Preview Video</span>
+              </div>
+            </div>
+            <div className="effect-card-content">
+              <h3>{effectKey.charAt(0).toUpperCase() + effectKey.slice(1)} Effect</h3>
+              <Link to={`/marketplace/${effectKey}`}>
+                <button className="customize-btn">Customize Effect</button>
+              </Link>
+            </div>
+          </div>
+        ))}
+        {/* Placeholder for future effects to show grid layout better */}
+        <div className="effect-card coming-soon">
+            <div className="effect-video-placeholder">
+               <div className="video-overlay">
+                <span>Coming Soon</span>
+              </div>
+            </div>
+             <div className="effect-card-content">
+              <h3>More Effects</h3>
+              <button className="customize-btn" disabled>Coming Soon</button>
+            </div>
+        </div>
+      </div>
     </div>
+    </>
   );
 }

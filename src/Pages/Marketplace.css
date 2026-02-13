@@ -1,0 +1,264 @@
+/* src/Pages/Marketplace.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.marketplace-container {
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh; /* Ensure full height */
+}
+
+/* Header & Title - MOVED TO PREVIEW SECTION */
+.effect-header-preview {
+    margin-bottom: 20px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.effect-title-preview {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+    background: linear-gradient(90deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.effect-preview-badge-large {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #eee;
+    width: fit-content;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Customizer Grid Layout */
+.customizer-layout {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 40px;
+    align-items: stretch; /* Stretch to fill height */
+    min-height: calc(100vh - 100px); /* Fill remaining height roughly */
+}
+
+/* Left Panel: Controls */
+.controls-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%; /* Take full height */
+}
+
+.controls-section {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    flex-grow: 1; /* Expand to fill space */
+}
+
+.control-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-label {
+    font-size: 0.9rem;
+    color: #ccc;
+    font-weight: 500;
+}
+
+.styled-input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.styled-input:focus {
+    border-color: #fff;
+}
+
+/* Color Picker */
+.styled-color {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: none;
+}
+
+.styled-color::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.styled-color::-webkit-color-swatch {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+}
+
+/* Right Panel: Preview Section */
+.preview-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-wrapper {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    background: #050505;
+    flex-grow: 1; /* Fill remaining height */
+    min-height: 500px; 
+    position: relative;
+}
+
+/* Export Button */
+.export-btn {
+    display: block;
+    width: 100%;
+    padding: 16px 24px;
+    background: white;
+    color: black;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: transform 0.2s, background-color 0.2s;
+    margin-top: auto; /* Push to bottom if flex container has space */
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    background-color: #f0f0f0;
+}
+
+/* Marketplace Listing Styles (Keep existing) */
+.effect-title {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 40px;
+    text-align: center;
+    background: linear-gradient(90deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.effects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+.effect-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.effect-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.effect-video-placeholder {
+    height: 200px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.video-overlay {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+}
+.effect-card-content {
+    padding: 20px;
+    text-align: center;
+}
+.effect-card-content h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+.customize-btn {
+    padding: 10px 20px;
+    background: white;
+    color: black;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: inherit;
+}
+.customize-btn:hover {
+    background-color: #f0f0f0;
+}
+.customize-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.MuiDialog-paper {
+    background-color: #1e1e1e !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .customizer-layout {
+        grid-template-columns: 300px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .marketplace-container {
+        padding: 20px;
+    }
+
+    .customizer-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .controls-panel {
+        order: 2;
+        height: auto;
+    }
+    
+    .preview-section {
+        order: 1;
+    }
+
+    .preview-wrapper {
+        min-height: 350px;
+    }
+    
+    .effect-title-preview {
+        font-size: 2rem;
+    }
+}
