@@ -7,5 +7,6 @@ export const effectsRegistry = {
     createEffect,
     defaultConfig,
     controls,
+    previewVideo: "https://res.cloudinary.com/cqn/video/upload/v1770997163/Dust_effect_mf4yfy.mp4",
   },
 };
