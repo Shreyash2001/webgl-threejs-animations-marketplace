@@ -1,15 +1,21 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    lib: {
-      entry: "src/effects/dust/embed.js",
-      name: "Dust",
-      fileName: (format) => `dust.${format}.js`,
-      formats: ["umd"],
+export default defineConfig(({ mode }) => {
+  const entries = {
+    dust: "src/Effects/Dust/embed.js",
+    flowingLiquid: "src/Effects/FlowingLiquid/embed.js",
+  };
+
+  return {
+    plugins: [react()],
+    build: {
+      lib: {
+        entry: entries[mode],
+        name: mode,
+        formats: ["umd"],
+        fileName: () => `${mode}.umd.js`,
+      },
     },
-  },
+  };
 });
