@@ -1,7 +1,7 @@
-import React, { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Text3D, Center } from '@react-three/drei';
-import * as THREE from 'three';
+import React, { useRef, useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Text3D, Center } from "@react-three/drei";
+import * as THREE from "three";
 
 const vertexShader = `
 uniform float uTime;
@@ -84,10 +84,19 @@ void main() {
 }
 `;
 
-
-export default function LiquidText({ text, size, height, speed, distortion, color1, color2, color3, color4 }) {
+export default function LiquidText({
+  text,
+  size,
+  height,
+  speed,
+  distortion,
+  color1,
+  color2,
+  color3,
+  color4,
+}) {
   const meshRef = useRef();
-  
+
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
@@ -98,27 +107,38 @@ export default function LiquidText({ text, size, height, speed, distortion, colo
       uColor3: { value: new THREE.Color(color3) },
       uColor4: { value: new THREE.Color(color4) },
     }),
-    [] 
+    [],
   );
 
   // Safely update uniforms
   useFrame((state) => {
     if (meshRef.current) {
-        meshRef.current.material.uniforms.uTime.value = state.clock.getElapsedTime();
-        meshRef.current.material.uniforms.uSpeed.value = speed;
-        meshRef.current.material.uniforms.uDistortion.value = distortion;
-        meshRef.current.material.uniforms.uColor1.value.set(color1);
-        meshRef.current.material.uniforms.uColor2.value.set(color2);
-        meshRef.current.material.uniforms.uColor3.value.set(color3);
-        meshRef.current.material.uniforms.uColor4.value.set(color4);
+      meshRef.current.material.uniforms.uTime.value =
+        state.clock.getElapsedTime();
+      meshRef.current.material.uniforms.uSpeed.value = speed;
+      meshRef.current.material.uniforms.uDistortion.value = distortion;
+      meshRef.current.material.uniforms.uColor1.value.set(color1);
+      meshRef.current.material.uniforms.uColor2.value.set(color2);
+      meshRef.current.material.uniforms.uColor3.value.set(color3);
+      meshRef.current.material.uniforms.uColor4.value.set(color4);
     }
   });
+
+  let fontUrl = "/fonts/helvetiker_bold.typeface.json";
+
+  if (typeof document !== "undefined") {
+    const script = document.currentScript;
+    if (script && script.src.includes("/dist/")) {
+      const base = script.src.split("/dist/")[0];
+      fontUrl = `${base}/fonts/helvetiker_bold.typeface.json`;
+    }
+  }
 
   return (
     <Center>
       <Text3D
         ref={meshRef}
-        font="/fonts/helvetiker_bold.typeface.json"
+        font={fontUrl}
         size={size || 1}
         height={height || 0.2}
         curveSegments={32}
