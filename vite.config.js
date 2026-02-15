@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     build: {
+      emptyOutDir: false,
       lib: {
         entry: entries[mode],
         name: mode,
